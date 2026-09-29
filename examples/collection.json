@@ -1,30 +1,57 @@
 {
   "stac_version": "1.1.0",
   "stac_extensions": [
-    "https://stac-extensions.github.io/maps/v1.0.0/schema.json"
+    "https://stac-extensions.github.io/maps/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/web-map-links/v1.3.0/schema.json"
   ],
   "type": "Collection",
   "id": "collection",
-  "title": "A title",
-  "description": "A description",
-  "license": "Apache-2.0",
+  "title": "Yearly mosaics",
+  "description": "Cloud-free yearly mosaics",
+  "license": "CC-BY-4.0",
   "extent": {
     "spatial": {
       "bbox": [
         [
-          172.9,
-          1.3,
-          173,
-          1.4
+          9,
+          47.7,
+          10.5,
+          48.7
         ]
       ]
     },
     "temporal": {
       "interval": [
         [
-          "2015-06-23T00:00:00Z",
+          "2015-01-01T00:00:00Z",
           null
         ]
+      ]
+    }
+  },
+  "maps": {
+    "mosaic": {
+      "title": "Latest mosaic over a basemap",
+      "roles": [
+        "default"
+      ],
+      "proj:code": "EPSG:3857",
+      "dimensions": {
+        "time": "2025"
+      },
+      "layers": [
+        {
+          "link": {
+            "rel": "xyz",
+            "href": "https://basemap.example.com/{z}/{x}/{y}.png",
+            "type": "image/png",
+            "title": "Basemap"
+          }
+        },
+        {
+          "link": "mosaic-wmts",
+          "opacity": 0.9
+        }
       ]
     }
   },
@@ -36,6 +63,14 @@
     {
       "href": "https://example.com/examples/item.json",
       "rel": "item"
+    },
+    {
+      "id": "mosaic-wmts",
+      "rel": "wmts",
+      "href": "https://maps.example.com/wmts",
+      "type": "image/png",
+      "title": "Yearly mosaic",
+      "wmts:layer": "mosaic"
     }
   ]
 }
