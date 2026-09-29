@@ -22,6 +22,303 @@
         "Collection",
         "Feature"
       ]
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/link_id"
+      }
+    },
+    "linkTemplates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/link_id"
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$comment": "Items",
+      "type": "object",
+      "required": [
+        "type",
+        "properties"
+      ],
+      "properties": {
+        "type": {
+          "const": "Feature"
+        },
+        "properties": {
+          "$ref": "#/definitions/require_maps"
+        }
+      }
+    },
+    {
+      "$comment": "Catalogs and Collections",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "Catalog",
+            "Collection"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/require_maps"
+        }
+      ]
+    }
+  ],
+  "definitions": {
+    "require_maps": {
+      "type": "object",
+      "required": [
+        "maps"
+      ],
+      "properties": {
+        "maps": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/definitions/map"
+          }
+        }
+      }
+    },
+    "map": {
+      "type": "object",
+      "required": [
+        "layers"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "proj:code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proj:wkt2": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proj:projjson": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "bbox": {
+          "type": "array",
+          "oneOf": [
+            {
+              "minItems": 4,
+              "maxItems": 4
+            },
+            {
+              "minItems": 6,
+              "maxItems": 6
+            }
+          ],
+          "items": {
+            "type": "number"
+          }
+        },
+        "dimensions": {
+          "type": "object"
+        },
+        "layers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/layer"
+          }
+        }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "asset"
+          ]
+        },
+        {
+          "required": [
+            "link"
+          ]
+        },
+        {
+          "required": [
+            "render"
+          ]
+        }
+      ],
+      "if": {
+        "required": [
+          "render"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "style"
+          ]
+        }
+      },
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "link": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "$ref": "#/definitions/embedded_link"
+            }
+          ]
+        },
+        "render": {
+          "type": "string",
+          "minLength": 1
+        },
+        "style": {
+          "$ref": "#/definitions/style"
+        },
+        "title": {
+          "type": "string"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "visible": {
+          "type": "boolean"
+        },
+        "min_resolution": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_resolution": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "style": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "link"
+          ]
+        },
+        {
+          "required": [
+            "render"
+          ]
+        }
+      ],
+      "properties": {
+        "link": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/embedded_link"
+                },
+                {
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "rel": {
+                      "const": "stylesheet"
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "render": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "embedded_link": {
+      "type": "object",
+      "required": [
+        "rel"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "href"
+          ]
+        },
+        {
+          "required": [
+            "uriTemplate"
+          ]
+        }
+      ],
+      "properties": {
+        "rel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "href": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uriTemplate": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "link_id": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }
